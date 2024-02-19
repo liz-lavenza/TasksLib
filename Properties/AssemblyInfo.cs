@@ -11,7 +11,7 @@ using MelonLoader;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TasksLib")]
-[assembly: AssemblyCopyright("Copyright © Liz Lavenza 2023")]
+[assembly: AssemblyCopyright("Copyright © Liz Lavenza 2023-2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,9 +33,9 @@ using MelonLoader;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.2.0.0")]
+[assembly: AssemblyFileVersion("0.2.0.0")]
 
-[assembly: MelonInfo(typeof(TasksLib.TasksLibMod), "Tasks Library", "0.1", "Elizabeth Lavenza")]
+[assembly: MelonInfo(typeof(TasksLib.TasksLibMod), "Tasks Library", "0.2.0.0", "Elizabeth Lavenza")]
 [assembly: MelonGame("YandereDev", "YandereSimulator")]
 [assembly: MelonPriority(-1)] // Library mod, try to load earlier than default-config mods.
