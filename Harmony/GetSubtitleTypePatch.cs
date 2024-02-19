@@ -10,31 +10,22 @@ namespace TasksLib.Harmony
     [HarmonyPatch(typeof(StudentScript), nameof(StudentScript.TaskLineResponseType), MethodType.Getter)]
     static class GetSubtitleTypePatch
     {
-        [HarmonyPostfix]
-        private static void Postfix(StudentScript __instance, ref SubtitleType __result)
+        [HarmonyPrefix]
+        private static bool Prefix(StudentScript __instance, ref SubtitleType __result)
         {
-            if (__result == SubtitleType.TaskGenericLine)
-            {
-                if (TasksLibMod.ModdedTaskExists(__instance.StudentID))
-                {
-                    YandereTask ourTask = TasksLibMod.tasksByID[__instance.StudentID];
-                    __instance.Yandere.Subtitle.CustomText = ourTask.Lines[ourTask.GetTaskPhase()];
-                    __result = SubtitleType.Custom;
-                }
-            }
-        }
-        [HarmonyTranspiler]
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            // IL_0031: stelem.i4
-            CodeMatcher matcher = new CodeMatcher(instructions)
-                .MatchEndForward(
-                    new CodeMatch(OpCodes.Stelem_I4)
-                ).Advance(1);
-            return matcher
-                .InsertAndAdvance(matcher.InstructionsWithOffsets(-4, -3)) // StudentID
-                .Insert(CodeInstruction.Call(typeof(TasksLibMod), nameof(TasksLibMod.ActivateTask))
-                ).InstructionEnumeration();
+			if (TasksLibMod.ModdedTaskExists(__instance.StudentID))
+			{
+				YandereTask ourTask = TasksLibMod.tasksByID[__instance.StudentID];
+				if (!ourTask.IsAvailable()) // It might exist but not be available due to 80s mode or other requirements.
+				{
+                    return true; // Keep the original line.
+				}
+				__instance.Yandere.Subtitle.CustomText = ourTask.Lines[ourTask.GetTaskPhase()];
+				__result = SubtitleType.Custom;
+				TasksLibMod.ActivateTask(__instance.StudentID);
+                return false;
+			}
+            return true;
         }
     }
 /*

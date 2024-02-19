@@ -14,23 +14,10 @@ namespace TaskMod.Harmony
         [HarmonyTranspiler]
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
+            //  IL_168c: stfld bool TaskWindowScript::TaskComplete
             return new CodeMatcher(instructions)
-                // 	IL_16b1: ldc.i4.3
-                //  IL_16b2: stelem.i4
-                .MatchEndForward(
-                    new CodeMatch(code => code.LoadsField(AccessTools.Field(typeof(StudentScript), nameof(StudentScript.StudentID)))),
-                    new CodeMatch(OpCodes.Ldc_I4_3),
-                    new CodeMatch(OpCodes.Stelem_I4)
-                )
-                .Advance(-5)
-                .Insert(
-                    new CodeInstruction(OpCodes.Ldarg_0),
-                    CodeInstruction.LoadField(typeof(TalkingScript), nameof(TalkingScript.S)),
-                    CodeInstruction.LoadField(typeof(StudentScript), nameof(StudentScript.StudentID)),
-                    CodeInstruction.Call(typeof(TasksLibMod), nameof(TasksLibMod.ActivateTask))
-                )
-                //  IL_168c: stfld bool TaskWindowScript::TaskComplete
-                .MatchEndForward(new CodeMatch(code => code.LoadsField(AccessTools.Field(typeof(TaskWindowScript), nameof(TaskWindowScript.TaskComplete)))))
+                .MatchEndForward(new CodeMatch(code => code.StoresField(AccessTools.Field(typeof(TaskWindowScript), nameof(TaskWindowScript.TaskComplete)))))
+                .ThrowIfInvalid("Unable to find insertion site for TurnInTask() in TalkingScript.Update()!")
                 .Insert(
                     new CodeInstruction(OpCodes.Ldarg_0),
                     CodeInstruction.LoadField(typeof(TalkingScript), nameof(TalkingScript.S)),

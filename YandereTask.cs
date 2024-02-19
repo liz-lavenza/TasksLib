@@ -33,10 +33,19 @@ namespace TasksLib
         }
         private Texture2D _texture;
         public bool IsEighties = false;
+        public bool IsCustomMode = false;
         protected TaskManagerScript taskman => TasksLibMod.taskManagerScript;
         public virtual bool IsAvailable()
         {
-            return IsEighties == taskman.Eighties;
+			if (IsEighties != taskman.Eighties)
+			{
+				return false;
+			}
+			if (IsCustomMode != taskman.StudentManager.CustomMode)
+			{
+				return false;
+			}
+            return true;
         }
         public virtual bool IsComplete()
         {
@@ -50,7 +59,11 @@ namespace TasksLib
                 Debug.LogWarning($"TasksLib.YandereTask.MarkActive could not find student with ID {this.StudentID}!");
                 return;
             }
-            GetTaskObject()?.SetActive(true);
+            GameObject taskObject = GetTaskObject();
+            if (taskObject != null) // Must use equality operator here, NOT "is" or null-coalescing operator, because only equality checks for destroyed objects.
+            {
+                taskObject.SetActive(true);
+            }
             OnMarkActive();
         }
 
